@@ -1,0 +1,2 @@
+class JPCHeartbeatTimeout(Exception):
+    pass
