@@ -42,13 +42,12 @@ class JPCClient:
                 self.process_packets()
                 self.gui.root.update()
         except JPCHeartbeatTimeout:
-            print('hrtbt timeout')
-        except socket.error:
-            print('socket error')
-        except:
-            print('idk')
-        finally:
             self.re_run()
+        except socket.error:
+            self.re_run()
+        except Exception as e:
+            raise e
+
 
     def process_packets(self):
         packets = self.server.recv()
@@ -92,8 +91,8 @@ class JPCClient:
             elif message_type == JPCProtocol.MESSAGE_IMG:
                 print('rx an image')
                 self.process_tell_image(message)
-        except:
-            print("failed")
+        except Exception as e:
+            raise e
 
     def process_tell_text(self, message):
         self.gui.set_message(message)

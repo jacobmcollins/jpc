@@ -19,7 +19,6 @@ class ReconnectingSocket:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('attempting to connect to {}:{}'.format(self.address, JPCProtocol.STANDARD_PORT))
         while self.sock.connect_ex((self.address, JPCProtocol.STANDARD_PORT)) != 0:
-            print('sleep')
             time.sleep(1)
         print('connected')
         self.connected = True
