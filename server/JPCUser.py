@@ -59,17 +59,20 @@ class JPCUserList:
     def tx_rx_heartbeats(self):
         t = time.time()
         while True:
+            time.sleep(1)
             try:
                 n = time.time()
                 if n - t >= JPCProtocol.HEARTBEAT_INTERVAL:
                     t = n
                     for user in self.users:
                         if user.connected:
-                            JPCHeartbeatPacket().send(user.connection)
                             elapsed = t - user.last_heartbeat
                             if elapsed >= JPCProtocol.HEARTBEAT_TIMEOUT:
-                                raise JPCHeartbeatTimeout
-            except:
+                                raise JPCHeartbeatTimeout(user)
+                            JPCHeartbeatPacket().send(user.connection)
+            except JPCHeartbeatTimeout as e:
+                e.user.close()
+            except Exception as e:
                 pass
 
 
@@ -89,7 +92,7 @@ class JPCUser:
         self.last_heartbeat = time
 
     def close(self, opcode=JPCProtocol.CLOSE, payload=None):
-        JPCProtocol(opcode, payload).send(self.connection)
+        #JPCProtocol(opcode, payload).send(self.connection)
         self.connection.close()
         self.connection = None
         self.last_heartbeat = None
