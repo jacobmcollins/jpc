@@ -37,22 +37,33 @@ class JPCServer:
             connection, client_address = self.connection.accept()
             threading.Thread(target=self.handle, args=[connection]).start()
 
+    def handle_packet(self, packet, connection):
+        from utl.JPCByteStuffer import remove_crc, calculate_crc
+        x, crc = remove_crc(packet)
+        crc2 = calculate_crc(x)
+        if crc == crc2:
+            json_data = json.loads(x.decode())
+            JPCLogger.log_rx(json_data, time.time())
+            self.process(json_data, connection)
+
     def handle(self, connection):
         try:
             running = True
             while running:
+                from utl.JPCByteStuffer import byte_unstuff2
+                byte_unstuff2(connection, self.handle_packet)
                 # TODO: Change the recv value to use less RAM, need to fix up get_valid_packets first
-                data = connection.recv(999999999)
-                if data:
-                    packets = get_valid_packets(data)
-                    for packet in packets:
-                        json_data = json.loads(packet)
-                        JPCLogger.log_rx(json_data, time.time())
-                        self.process(json_data, connection)
+                # data = connection.recv(999999999)
+                # if data:
+                #     packets = get_valid_packets(data)
+                #     for packet in packets:
+                #         json_data = json.loads(packet)
+                #         JPCLogger.log_rx(json_data, time.time())
+                #         self.process(json_data, connection)
         except JPCHeartbeatTimeout:
             print('hrtbt timeout')
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
 
     def process(self, data, connection):

@@ -60,4 +60,4 @@ def index():
 if __name__ == '__main__':
     server = JPCServer()
     threading.Thread(target=run_server, args=[server]).start()
-    app.run()
+    app.run(port=5000)

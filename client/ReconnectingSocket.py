@@ -39,12 +39,10 @@ class ReconnectingSocket:
         if self.connected:
             self.sock.send(raw_data)
 
-    def recv(self):
+    def recv(self, do_stuff):
         if self.connected:
-            data = self.sock.recv(99999999)
-            if data:
-                packet_list = get_valid_packets(data)
-                return packet_list
+            from utl.JPCByteStuffer import byte_unstuff2
+            byte_unstuff2(self.sock, do_stuff)
 
     def update_heartbeat(self, t):
         self.last_heartbeat = t

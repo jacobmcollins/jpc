@@ -24,15 +24,15 @@ def calculate_crc(input):
 
 def byte_stuff(input):
     output = bytearray([])
-    output.append(JPCProtocol.FRAME_BYTE)
+    output.append(JPCProtocol.FRAME_BYTE[0])
     for byte in input:
-        if byte == JPCProtocol.FRAME_BYTE or byte == JPCProtocol.ESCAPE_BYTE:
-            output.append(JPCProtocol.ESCAPE_BYTE)
-            output.append(byte ^ JPCProtocol.XOR_BYTE)
+        if byte == JPCProtocol.FRAME_BYTE[0] or byte == JPCProtocol.ESCAPE_BYTE[0]:
+            output.append(JPCProtocol.ESCAPE_BYTE[0])
+            output.append(byte ^ JPCProtocol.XOR_BYTE[0])
         else:
             output.append(byte)
 
-    output.append(JPCProtocol.FRAME_BYTE)
+    output.append(JPCProtocol.FRAME_BYTE[0])
 
     return output
 
@@ -45,14 +45,14 @@ def byte_unstuff(input):
     i = 0
     while i in range(length):
         byte = input[i]
-        if byte == JPCProtocol.FRAME_BYTE:
+        if byte == JPCProtocol.FRAME_BYTE[0]:
             if len(data) != 0:
                 output.append(data)
             data = bytearray([])
-        elif byte == JPCProtocol.ESCAPE_BYTE:
+        elif byte == JPCProtocol.ESCAPE_BYTE[0]:
             i += 1
             byte = input[i]
-            data.append(byte ^ JPCProtocol.XOR_BYTE)
+            data.append(byte ^ JPCProtocol.XOR_BYTE[0])
         else:
             data.append(byte)
         i += 1
@@ -69,3 +69,20 @@ def get_valid_packets(input):
         if actual_crc == expected_crc:
             output.append(wo_crc)
     return output
+
+
+def byte_unstuff2(sock, do_stuff):
+    data = bytearray([])
+    byte = sock.recv(1)
+    while byte:
+        if byte == JPCProtocol.FRAME_BYTE:
+            if len(data) != 0:
+                do_stuff(data, sock)
+            data = bytearray([])
+        elif byte == JPCProtocol.ESCAPE_BYTE:
+            byte = sock.recv(1)
+            data.append(byte[0] ^ JPCProtocol.XOR_BYTE[0])
+        else:
+            x = byte[0]
+            data.append(x)
+        byte = sock.recv(1)

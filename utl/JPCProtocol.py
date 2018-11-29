@@ -17,9 +17,9 @@ class JPCProtocol:
     STANDARD_PORT = 27272
 
     # byte stuffing
-    FRAME_BYTE = 0x7E
-    ESCAPE_BYTE = 0x7D
-    XOR_BYTE = 0x20
+    FRAME_BYTE = b'~'
+    ESCAPE_BYTE = b'}'
+    XOR_BYTE = b'^'
 
     # message types
     MESSAGE_TEXT = 0

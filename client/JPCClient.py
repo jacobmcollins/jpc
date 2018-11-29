@@ -23,7 +23,6 @@ class JPCClient:
         # Create server connection
         self.server = ReconnectingSocket(server_address)
         self.server.connect()
-        print('about to send hello')
         self.send_hello()
         self.send_heartbeat()
 
@@ -48,11 +47,15 @@ class JPCClient:
         except Exception as e:
             raise e
 
-
     def process_packets(self):
-        packets = self.server.recv()
-        for packet in packets:
-            json_data = json.loads(packet.decode('utf-8'))
+        packets = self.server.recv(self.process_packet)
+
+    def process_packet(self, packet, sock):
+        from utl.JPCByteStuffer import remove_crc, calculate_crc
+        x, crc = remove_crc(packet)
+        crc2 = calculate_crc(x)
+        if crc == crc2:
+            json_data = json.loads(x.decode())
             JPCLogger.log_rx(json_data, time.time())
             self.process(json_data)
 
