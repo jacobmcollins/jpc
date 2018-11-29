@@ -14,6 +14,14 @@ def handle_args():
 
 
 if __name__ == '__main__':
-    args = handle_args()
-    client = JPCClient(args.ip)
-    client.run()
+    try:
+        args = handle_args()
+        client = JPCClient(args.ip)
+        client.run()
+    except KeyboardInterrupt:
+        print('keyboard interrupt')
+    except Exception as e:
+        print(e)
+    finally:
+        sys.exit()
+
