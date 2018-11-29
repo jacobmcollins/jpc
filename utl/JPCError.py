@@ -1,2 +1,3 @@
 class JPCHeartbeatTimeout(Exception):
-    pass
+    def __init__(self, user):
+        self.user = user
