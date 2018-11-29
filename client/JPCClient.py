@@ -23,6 +23,7 @@ class JPCClient:
         # Create server connection
         self.server = ReconnectingSocket(server_address)
         self.server.connect()
+        print('about to send hello')
         self.send_hello()
         self.send_heartbeat()
 
@@ -50,14 +51,11 @@ class JPCClient:
             self.re_run()
 
     def process_packets(self):
-        try:
-            packets = self.server.recv()
-            for packet in packets:
-                json_data = json.loads(packet)
-                JPCLogger.log_rx(json_data, time.time())
-                self.process(json_data)
-        except:
-            raise socket.error
+        packets = self.server.recv()
+        for packet in packets:
+            json_data = json.loads(packet.decode('utf-8'))
+            JPCLogger.log_rx(json_data, time.time())
+            self.process(json_data)
 
     def handle_heartbeats(self, t):
         elapsed = self.server.last_heartbeat - t
@@ -89,8 +87,10 @@ class JPCClient:
             message = payload['message']
             message_type = payload['message_type']
             if message_type == JPCProtocol.MESSAGE_TEXT:
+                print('rx a text message')
                 self.process_tell_text(message)
             elif message_type == JPCProtocol.MESSAGE_IMG:
+                print('rx an image')
                 self.process_tell_image(message)
         except:
             print("failed")

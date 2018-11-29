@@ -17,8 +17,11 @@ class ReconnectingSocket:
 
     def connect(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print('attempting to connect to {}:{}'.format(self.address, JPCProtocol.STANDARD_PORT))
         while self.sock.connect_ex((self.address, JPCProtocol.STANDARD_PORT)) != 0:
+            print('sleep')
             time.sleep(1)
+        print('connected')
         self.connected = True
         self.last_heartbeat = time.time()
 
@@ -39,9 +42,10 @@ class ReconnectingSocket:
 
     def recv(self):
         if self.connected:
-            data = self.sock.recv(9999999)
-            packet_list = get_valid_packets(data)
-            return packet_list
+            data = self.sock.recv(99999999)
+            if data:
+                packet_list = get_valid_packets(data)
+                return packet_list
 
     def update_heartbeat(self, t):
         self.last_heartbeat = t
