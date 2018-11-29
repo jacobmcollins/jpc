@@ -41,6 +41,7 @@ class JPCServer:
         try:
             running = True
             while running:
+                # TODO: Change the recv value to use less RAM, need to fix up get_valid_packets first
                 data = connection.recv(999999999)
                 if data:
                     packets = get_valid_packets(data)
