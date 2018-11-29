@@ -16,7 +16,8 @@ from utl.JPCLogging import JPCLogger
 class JPCServer:
     def __init__(self):
         self.users = JPCUserList("pi_whitelist.txt")
-        threading.Thread(target=self.users.tx_rx_heartbeats).start()
+        self.heartbeat_thread = threading.Thread(target=self.users.tx_rx_heartbeats)
+        self.heartbeat_thread.start()
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.bind(('localhost', JPCProtocol.STANDARD_PORT))
 

@@ -11,7 +11,6 @@ from utl.JPCError import JPCHeartbeatTimeout
 from utl.JPCLogging import JPCLogger
 from utl.JPCPacket import JPCHelloPacket, JPCHeartbeatPacket
 from utl.JPCProtocol import JPCProtocol
-from server.JPCUser import JPCUser
 
 
 # Pi3 Client Class
@@ -45,6 +44,8 @@ class JPCClient:
             print('hrtbt timeout')
         except socket.error:
             print('socket error')
+        except:
+            print('idk')
         finally:
             self.re_run()
 
@@ -60,7 +61,6 @@ class JPCClient:
 
     def handle_heartbeats(self, t):
         elapsed = self.server.last_heartbeat - t
-        print('{} ok'.format(elapsed))
         if self.server.connected and elapsed >= JPCProtocol.HEARTBEAT_INTERVAL:
             self.send_heartbeat()
             if elapsed >= JPCProtocol.HEARTBEAT_TIMEOUT:

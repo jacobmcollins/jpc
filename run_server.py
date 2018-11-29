@@ -18,14 +18,9 @@ os.makedirs(os.path.join(app.instance_path, 'Uploads'), exist_ok=True)
 path = os.path.dirname(__file__)
 sys.path.append(path)
 
+
 def run_server(server):
     server.run()
-    #server.send_message("lindsay", "abc")
-
-
-def shift_string(my_string, shift):
-    alph_string = string.ascii_letters # string of both uppercase/lowercase letters
-    return ''.join([chr(ord(c)+shift) if c in alph_string else c for c in my_string])
 
 
 @app.route('/get_message', methods=['POST'])
