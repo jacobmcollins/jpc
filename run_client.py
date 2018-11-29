@@ -19,5 +19,8 @@ if __name__ == '__main__':
         client = JPCClient(args.ip)
         client.run()
     except KeyboardInterrupt:
-        print('interrupt')
+        print('keyboard interrupt')
+    except Exception as e:
+        print(e)
+    finally:
         sys.exit()

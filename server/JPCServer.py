@@ -19,7 +19,7 @@ class JPCServer:
         self.heartbeat_thread = threading.Thread(target=self.users.tx_rx_heartbeats)
         self.heartbeat_thread.start()
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection.bind(('localhost', JPCProtocol.STANDARD_PORT))
+        self.connection.bind(('', JPCProtocol.STANDARD_PORT))
 
     def send_image(self, image_file, recipient):
         file = open(image_file, "rb")
@@ -41,7 +41,7 @@ class JPCServer:
         try:
             running = True
             while running:
-                data = connection.recv(64000)
+                data = connection.recv(999999999)
                 if data:
                     packets = get_valid_packets(data)
                     for packet in packets:
